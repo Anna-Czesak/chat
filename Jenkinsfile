@@ -1,8 +1,8 @@
 pipeline {
     agent any
-
+	tools{nodejs "nodejs"}
     stages {
-        stage('Build') {
+        stage('Build') { 
             steps {
                 echo 'Building'
                 sh 'git pull origin master'
@@ -12,9 +12,10 @@ pipeline {
                 recipientProviders: [developers(), requestor()],
                 to: 'anna.czesak@icloud.com',
                 subject: "Build result"
+                
             }
         }
-        stage('Test') {
+        stage('Test') { 
             when{
                 expression {"SUCCESS".equals(currentBuild.currentResult)}
             }
@@ -23,10 +24,24 @@ pipeline {
                 sh 'npm run test'
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
+    }
+
+    post {
+        failure {
+            echo 'Success'
+            emailext attachLog: true,
+                body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+                recipientProviders: [developers(), requestor()],
+                to: 'anna.czesak@icloud.com',
+                subject: "Build failed in Jenkins"
+        }
+        success {
+            echo 'Fail'
+            emailext attachLog: true,
+                body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+                recipientProviders: [developers(), requestor()],
+                to: 'anna.czesak@icloud.com',
+                subject: "Successful build in Jenkins"
         }
     }
 }
