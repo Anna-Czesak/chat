@@ -10,7 +10,7 @@ pipeline {
                 emailext attachLog: true,
                 body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
                 recipientProviders: [developers(), requestor()],
-                to: 'peepeek18@gmail.com',
+                to: 'anna.czesak@icloud.com',
                 subject: "Build result"
             }
         }
