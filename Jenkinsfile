@@ -4,18 +4,23 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building..'
-                nodejs('npm') {
-                    sh 'npm install'
-                }
+                echo 'Building'
+                sh 'git pull origin master'
+                sh 'npm install'
+                emailext attachLog: true,
+                body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+                recipientProviders: [developers(), requestor()],
+                to: 'peepeek18@gmail.com',
+                subject: "Build result"
             }
         }
         stage('Test') {
+            when{
+                expression {"SUCCESS".equals(currentBuild.currentResult)}
+            }
             steps {
-                echo 'Testing..'
-                nodejs('npm') {
-                    sh 'npm run test'
-                }
+                echo 'Testing'
+                sh 'npm run test'
             }
         }
         stage('Deploy') {
