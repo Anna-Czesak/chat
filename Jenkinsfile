@@ -12,9 +12,7 @@ pipeline {
         stage('Test') { 
             steps {
                 echo 'Testing'
-                nodejs('npm') {
-                    sh 'npm run test'
-                }
+                sh 'npm run test'
             }
         }
     }
