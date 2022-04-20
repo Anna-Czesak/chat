@@ -10,6 +10,8 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Testing..'
+                docker build -t test-agent
+                docker run -it test-agent
             }
         }
         stage('Deploy') {
