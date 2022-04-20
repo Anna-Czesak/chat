@@ -7,6 +7,7 @@ pipeline {
                 echo 'Building'
                 sh 'git pull origin master'
                 sh 'npm install'
+		sh 'npm run build'
                 emailext attachLog: true,
                 body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
                 recipientProviders: [developers(), requestor()],
