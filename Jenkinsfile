@@ -5,10 +5,8 @@ pipeline {
         stage('Build') { 
             steps {
                 echo 'Building'
-                nodejs('npm') {
-                    sh 'npm install'
-                   
-                }
+                sh 'git pull origin master'
+                sh 'npm install'    
             }
         }
         stage('Test') { 
