@@ -1,24 +1,41 @@
 pipeline {
     agent any
-    tools {nodejs "nodejs"}
+  
     stages {
-        stage('Build') {
+        stage('Build') { 
             steps {
-                echo 'Building..'
-                sh 'git pull origin master'
-                sh 'npm install'   
+                echo 'Building'
+                nodejs('npm') {
+                    sh 'npm install'
+                }
             }
         }
-        stage('Test') {
+        stage('Test') { 
             steps {
-                echo 'Testing..'
-               
+                echo 'Testing'
+                nodejs('npm') {
+                    sh 'npm run test'
+                }
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
+    }
+
+    post {
+        failure {
+            echo 'Success'
+            emailext attachLog: true,
+                body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+                recipientProviders: [developers(), requestor()],
+                to: 'czeslave@gmail.com',
+                subject: "Succesful build in Jenkins CI"
+        }
+        success {
+            echo 'Fail'
+            emailext attachLog: true,
+                body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+                recipientProviders: [developers(), requestor()],
+                to: 'czeslave@gmail.com',
+                subject: "Failed build in Jenkins CI"
         }
     }
 }
