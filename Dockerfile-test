@@ -1,4 +1,4 @@
-FROM build:latest
+FROM build-agent:latest
 
 WORKDIR chat
 
